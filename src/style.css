@@ -31,28 +31,38 @@ body {
 #console-display {
   border: 1px solid #ddd;
   padding: 10px;
-  height: 300px;
-  overflow-y: auto;
+	width: 50vw;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
 
 #console-output {
   margin-bottom: 20px;
+	height: 300px;
+	overflow-y: auto;
+	flex-grow: 1;
 }
 
 #console-input {
   display: flex;
+	flex-direction: row;
   align-items: center;
+	width: 100%;
 }
 
 #console-input-text {
   flex-grow: 1;
   margin-right: 10px;
-  padding: 5px;
+  padding: 5px 10px;
   border: 1px solid #ddd;
+	height: 2rem;
 }
 
 #console-input-send {
   padding: 5px 10px;
+	height: 2rem;
   background-color: #007bff;
   color: #fff;
   border: none;

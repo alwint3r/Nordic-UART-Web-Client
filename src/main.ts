@@ -15,16 +15,24 @@ const NORDIC_UART_TX = "6e400002-b5a3-f393-e0a9-e50e24dcca9e"; // It's actually 
 const NORDIC_UART_RX = "6e400003-b5a3-f393-e0a9-e50e24dcca9e"; // It's actually TX for the device
 
 const connectControlButton = document.querySelector("#connect-control") as HTMLButtonElement;
-const consoleDisplayElement = document.querySelector("#console-display") as HTMLDivElement;
 const consoleOutputElement = document.querySelector("#console-output") as HTMLTextAreaElement;
 const consoleInputElement = document.querySelector("#console-input-text") as HTMLInputElement;
 const consoleSendButton = document.querySelector("#console-input-send") as HTMLButtonElement;
 
+function enableConsoleInputs() {
+	consoleInputElement.disabled = false;
+	consoleSendButton.disabled = false;
+}
+
+function disableConsoleInputs() {
+	consoleInputElement.disabled = true;
+	consoleSendButton.disabled = true;
+}
+
 let bluetoothDeviceConnected = false;
 let bluetoothDevice: BluetoothDevice | null = null;
 
-// hide console display element by default
-consoleDisplayElement.style.display = "none";
+disableConsoleInputs();
 
 consoleSendButton.addEventListener("click", async () => {
 	if (!bluetoothDeviceConnected) {
@@ -55,6 +63,14 @@ async function onConnectControlBtnWantsToDisconnect() {
 	bluetoothDeviceConnected = false;
 	bluetoothDevice = null;
 	connectControlButton.innerText = "Connect";
+
+}
+
+function onGattDisconnected() {
+	console.log("Device disconnected");
+
+	bluetoothDeviceConnected = false;
+	disableConsoleInputs();
 }
 
 async function onConnectControlBtnWantsToConnect() {
@@ -70,6 +86,7 @@ async function onConnectControlBtnWantsToConnect() {
 
 	try {
 		const server = await bluetoothDevice.gatt.connect();
+		server.device.addEventListener("gattserverdisconnected", onGattDisconnected);
 		console.log(`Connected to device ${bluetoothDevice.name}`);
 		connectControlButton.innerText = "Disconnect";
 		bluetoothDeviceConnected = true;
@@ -90,7 +107,7 @@ async function onConnectControlBtnWantsToConnect() {
 
 		await rxCharacteristic.startNotifications();
 
-		consoleDisplayElement.style.display = "block";
+		enableConsoleInputs();
 	} catch (ex) {
 		console.error("Error connecting to device", ex);
 		bluetoothDeviceConnected = false;
@@ -106,5 +123,6 @@ connectControlButton.addEventListener("click", async () => {
 		await onConnectControlBtnWantsToConnect();
 	}
 });
+
 
 export { };
