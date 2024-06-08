@@ -1,25 +1,38 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BLE Client for Vanilla Typescript Project</title>
-  </head>
-  <body>
-    <div id="app">
-			<div id="main-screen">
-				<button id="connect-control">Connect</button>
-				<div id="console-display">
-					<code id="console-output">
+
+<head>
+	<meta charset="UTF-8" />
+	<link rel="icon" type="image/svg+xml" href="/vite.svg" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>BLE Client for Vanilla Typescript Project</title>
+</head>
+
+<body>
+	<div id="app" class="flex justify-center items-center height-screen">
+
+		<div id="main-screen" class="p-5 bg-white shadow-md flex flex-col gap-y-3">
+			<p id="global-err-msg" class="p-4 bg-red-500 text-white">
+				Bluetooth API is not supported in this browser. Please use a Google Chrome or Edge instead.
+			</p>
+
+			<button type="button" id="connect-control" class="mb-5 p-4 bg-blue-500 text-white cursor-pointer">Connect</button>
+			<div id="console-display" class="p-2 border border-solid border-slate-400 flex flex-col items-center w-[50vw]">
+				<div class="flex-grow w-full">
+					<code id="console-output"
+						class="mb-4 h-64 overflow-y-auto flex flex-col gap-y-1 justify-start items-stretch w-full">
 					</code>
-					<div id="console-input">
-						<input type="text" id="console-input-text" placeholder="Input command" />
-						<button id="console-input-send">Send</button>
-					</div>
+				</div>
+				<div id="console-input" class="flex flex-row items-center w-full">
+					<input type="text" id="console-input-text" placeholder="Input command"
+						class="flex-grow mr-2 px-4 py-2 border border-solid border-slate-400 h-16" />
+					<button id="console-input-send"
+						class="px-4 py-2 bg-blue-500 text-white cursor-pointer border-none h-16">Send</button>
 				</div>
 			</div>
 		</div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+	</div>
+	<script type="module" src="/src/main.ts"></script>
+</body>
+
 </html>

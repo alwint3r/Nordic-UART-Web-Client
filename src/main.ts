@@ -1,11 +1,15 @@
 import './style.css';
 
+const globalErrorElement = document.querySelector("#global-err-msg") as HTMLDivElement;
+
 console.log("Checking bluetooth status...");
 
 const availability = await navigator.bluetooth.getAvailability();
 if (availability) {
+	hideGlobalError();
 	console.log("Bluetooth is available");
 } else {
+	showGlobalError("Bluetooth is not available on this browser. Please use Chrome or Edge instead.");
 	throw new Error("Bluetooth is not available");
 }
 
@@ -19,6 +23,16 @@ const consoleOutputElement = document.querySelector("#console-output") as HTMLTe
 const consoleInputElement = document.querySelector("#console-input-text") as HTMLInputElement;
 const consoleSendButton = document.querySelector("#console-input-send") as HTMLButtonElement;
 
+function hideGlobalError() {
+	globalErrorElement.style.display = "none";
+	globalErrorElement.innerText = "";
+}
+
+function showGlobalError(message: string) {
+	globalErrorElement.innerText = message;
+	globalErrorElement.style.display = "block";
+}
+
 function enableConsoleInputs() {
 	consoleInputElement.disabled = false;
 	consoleSendButton.disabled = false;
@@ -27,6 +41,20 @@ function enableConsoleInputs() {
 function disableConsoleInputs() {
 	consoleInputElement.disabled = true;
 	consoleSendButton.disabled = true;
+}
+
+function appendElementToConsoleOutput(text: string, isInput: boolean) {
+	const element = document.createElement("div");
+	if (isInput) {
+		element.innerText = `> ${text}`;
+		const classes = ["bg-gray-500", "text-white", "p-1", "w-full", "block"];
+		element.classList.add(...classes);
+	} else {
+		element.innerText = text;
+		element.classList.add("bg-gray-800", "text-white", "p-1", "w-full", "block");
+	}
+
+	consoleOutputElement.appendChild(element);
 }
 
 let bluetoothDeviceConnected = false;
@@ -51,6 +79,8 @@ consoleSendButton.addEventListener("click", async () => {
 	await txCharacteristic.writeValue(encoded);
 	console.log(`Sent: ${text}`);
 
+	appendElementToConsoleOutput(text, true);
+
 	consoleInputElement.value = "";
 });
 
@@ -63,7 +93,6 @@ async function onConnectControlBtnWantsToDisconnect() {
 	bluetoothDeviceConnected = false;
 	bluetoothDevice = null;
 	connectControlButton.innerText = "Connect";
-
 }
 
 function onGattDisconnected() {
@@ -101,7 +130,11 @@ async function onConnectControlBtnWantsToConnect() {
 			const text = textDecoder.decode(value!);
 			console.log(`Received: ${text}`);
 
-			consoleOutputElement.innerHTML += text + "\n";
+			if (text.trim().length === 0) {
+				return;
+			}
+
+			appendElementToConsoleOutput(text, false);
 			consoleOutputElement.scrollTop = consoleOutputElement.scrollHeight;
 		});
 
